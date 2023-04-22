@@ -18,7 +18,7 @@ def VLR_news():
 
 @app.route('/matches/results')
 def VLR_scores():
-    return vlr.vlr_score
+    return vlr.vlr_score()
 
 
 @app.route('/stats/{region}/{timespan}')

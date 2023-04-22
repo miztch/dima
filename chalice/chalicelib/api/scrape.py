@@ -371,7 +371,7 @@ class Vlr:
             prize = prize.replace("\t", " ").replace("\n", " ").split()[0]
 
             dates = item.css_first(".mod-dates").text().strip()
-            dates = dates.replace("\u2013", "-")
+            dates = dates.replace("\u2014", "-")
             dates = dates.replace("\t", " ").replace("\n", " ")
             dates = dates.replace("                  Dates", "")
 

@@ -65,6 +65,11 @@ def VLR_upcoming():
     return vlr.vlr_upcoming()
 
 
+@app.route('/events')
+def VLR_events():
+    return vlr.vlr_events()
+
+
 @app.route('/health')
 def health():
     return {'status': 'OK'}

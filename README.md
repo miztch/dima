@@ -78,6 +78,29 @@
   }
   ```
 
+### `/events`
+
+- Method: `GET`
+- Response:
+  ```python
+  {
+      "data": {
+          "status": 200,
+          'segments': [
+                {
+                    "event_name": str,
+                    "status": str,
+                    "dates": str,
+                    "flag": str,
+                    "prize": str,
+                    "event_page": str,
+                    "event_icon": str
+                }
+          ],
+      }
+  }
+  ```
+
 ### `/rankings/<region>`
 
 - Method: `GET`

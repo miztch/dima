@@ -352,6 +352,57 @@ class Vlr:
             raise Exception("API response: {}".format(status))
         return data
 
+    @staticmethod
+    def vlr_events():
+        url = "https://www.vlr.gg/events"
+        resp = requests.get(url, headers=headers)
+        html = HTMLParser(resp.text)
+        status = resp.status_code
+
+        print(status)
+        result = []
+        for item in html.css("a.event-item"):
+
+            url_path = item.attributes['href']
+            title = item.css_first(".event-item-title").text().strip()
+            event_status = item.css_first(
+                ".event-item-desc-item-status").text().strip()
+
+            prize = item.css_first(".mod-prize").text().strip()
+            prize = prize.replace("\t", " ").replace("\n", " ").split()[0]
+
+            dates = item.css_first(".mod-dates").text().strip()
+            dates = dates.replace("\u2013", "-")
+            dates = dates.replace("\t", " ").replace("\n", " ")
+            dates = dates.replace("                  Dates", "")
+
+            flag_list = [flag_parent.attributes["class"].replace(
+                " mod-", "_") for flag_parent in item.css('.flag')]
+            flag = flag_list[0] if flag_list else ''
+
+            event_icon_url = item.css_first(".event-item-thumb")
+            event_icon_url = f"https:{event_icon_url}"
+
+            result.append(
+                {
+                    "event_name": title,
+                    "status": event_status,
+                    "dates": dates,
+                    "flag": flag,
+                    "prize": prize,
+                    "event_page": url_path,
+                    "event_icon": event_icon_url
+                }
+            )
+
+        segments = {"status": status, "segments": result}
+
+        data = {"data": segments}
+
+        if status != 200:
+            raise Exception("API response: {}".format(status))
+        return data
+
 
 if __name__ == '__main__':
     print(Vlr.vlr_upcoming())

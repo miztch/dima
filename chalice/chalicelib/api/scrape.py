@@ -379,7 +379,8 @@ class Vlr:
                 " mod-", "_") for flag_parent in item.css('.flag')]
             flag = flag_list[0] if flag_list else ''
 
-            event_icon_url = item.css_first(".event-item-thumb")
+            event_icon_url = item.css_first(
+                ".event-item-thumb").css_first("img").attributes['src']
             event_icon_url = f"https:{event_icon_url}"
 
             result.append(

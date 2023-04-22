@@ -359,7 +359,6 @@ class Vlr:
         html = HTMLParser(resp.text)
         status = resp.status_code
 
-        print(status)
         result = []
         for item in html.css("a.event-item"):
 

@@ -359,7 +359,6 @@ class Vlr:
         html = HTMLParser(resp.text)
         status = resp.status_code
 
-        print(status)
         result = []
         for item in html.css("a.event-item"):
 
@@ -372,7 +371,7 @@ class Vlr:
             prize = prize.replace("\t", " ").replace("\n", " ").split()[0]
 
             dates = item.css_first(".mod-dates").text().strip()
-            dates = dates.replace("\u2013", "-")
+            dates = dates.replace("\u2014", "-")
             dates = dates.replace("\t", " ").replace("\n", " ")
             dates = dates.replace("                  Dates", "")
 
@@ -380,7 +379,8 @@ class Vlr:
                 " mod-", "_") for flag_parent in item.css('.flag')]
             flag = flag_list[0] if flag_list else ''
 
-            event_icon_url = item.css_first(".event-item-thumb")
+            event_icon_url = item.css_first(
+                ".event-item-thumb").css_first("img").attributes['src']
             event_icon_url = f"https:{event_icon_url}"
 
             result.append(

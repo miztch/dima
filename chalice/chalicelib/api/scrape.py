@@ -25,14 +25,14 @@ class Vlr:
         html, status_code = resp.text, resp.status_code
         return HTMLParser(html), status_code
 
-    def vlr_recent(self):
+    def vlr_recent(self, page: str = 1):
         """
             This function is getting the news articles from the website and
             returning the data in a dictionary.
             :return: a dictionary with the key "data" and the value of the dictionary is another dictionary with the
             keys "status" and "segments".
             """
-        url = "https://www.vlr.gg/news"
+        url = f"https://www.vlr.gg/news?page={page}"
         html, status = self.get_parse(url)
         result = []
         for item in html.css('a.wf-module-item'):

@@ -13,7 +13,9 @@ def index():
 
 @app.route('/news')
 def VLR_news():
-    return vlr.vlr_recent()
+    request = app.current_request
+    page = request.query_params.get('page') if request.query_params else ''
+    return vlr.vlr_recent(page)
 
 
 @app.route('/matches/results')

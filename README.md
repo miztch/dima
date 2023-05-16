@@ -9,20 +9,20 @@
 
 - Method: `GET`
 - Response:
-  ```python
+  ```json
   {
-      "data": {
-          "status": 200,
-          'segments': [
-              {
-                  'title': str,
-                  'description': str,
-                  'date': str,
-                  'author': str,
-                  'url_path': str
-              }
-          ],
-      }
+    "data": {
+      "status": 200,
+      "segments": [
+        {
+          "title": "TenZ returns to Sentinels active roster",
+          "description": "He's back.",
+          "date": "May 9, 2023",
+          "author": "eutalyx",
+          "url_path": "/209209/tenz-returns-to-sentinels-active-roster"
+        },...
+      ]
+    }
   }
   ```
 
@@ -30,24 +30,26 @@
 
 - Method: `GET`
 - Response:
-  ```python
+  ```json
   {
-      "data": {
-          "status": 200,
-          'segments': [
-              {
-                "team1": str,
-                "team2": str,
-                "score1": str,
-                "score2": str,
-                "time_completed": str,
-                "round_info": str,
-                "tournament_name": str,
-                "match_page": str,
-                "tournament_icon": str
-              }
-          ],
-      }
+    "data": {
+      "status": 200,
+      "segments": [
+        {
+          "team1": "NRG Esports",
+          "team2": "LOUD",
+          "score1": "2",
+          "score2": "0",
+          "flag1": "flag_us",
+          "flag2": "flag_br",
+          "time_completed": "1d 14h ago",
+          "round_info": " Regular Season-Week 7",
+          "tournament_name": "Champions Tour 2023: Americas League",
+          "match_page": "/183815/nrg-esports-vs-loud-champions-tour-2023-americas-league-w7",
+          "tournament_icon": "https://owcdn.net/img/640f5ab71dfbb.png"
+        },...
+      ]
+    }
   }
   ```
 
@@ -55,26 +57,26 @@
 
 - Method: `GET`
 - Response:
-  ```python
+  ```json
   {
-      "data": {
-          "status": 200,
-          'segments': [
-              {
-                "team1": str,
-                "team2": str,
-                "flag1": str,
-                "flag2": str,
-                "score1": str,
-                "score2": str,
-                "time_until_match": str,
-                "round_info": str,
-                "tournament_name": str,
-                "match_page": str,
-                "tournament_icon": str
-              }
-          ],
-      }
+    "data": {
+      "status": 200,
+        "segments": [
+        {
+          "team1": "FNATIC",
+          "team2": "Natus Vincere",
+          "flag1": "flag_eu",
+          "flag2": "flag_eu",
+          "score1": "–",
+          "score2": "–",
+          "time_until_match": "1d 5h from now",
+          "round_info": "Regular Season–Week 8",
+          "tournament_name": "Champions Tour 2023: EMEA League",
+          "match_page": "/184057/fnatic-vs-natus-vincere-champions-tour-2023-emea-league-w8",
+          "tournament_icon": "https://owcdn.net/img/640f5accac10a.png"
+        },...
+      ]
+    }
   }
   ```
 
@@ -82,22 +84,22 @@
 
 - Method: `GET`
 - Response:
-  ```python
+  ```json
   {
-      "data": {
-          "status": 200,
-          'segments': [
-                {
-                    "event_name": str,
-                    "status": str,
-                    "dates": str,
-                    "flag": str,
-                    "prize": str,
-                    "event_page": str,
-                    "event_icon": str
-                }
-          ],
-      }
+    "data": {
+      "status": 200,
+      "segments": [
+        {
+          "event_name": "Champions Tour 2023: EMEA League",
+          "status": "ongoing",
+          "dates": "Mar 27-May 28",
+          "flag": "flag_de",
+          "prize": "TBD",
+          "event_page": "/event/1190/champions-tour-2023-emea-league",
+          "event_icon": "https://owcdn.net/img/640f5accac10a.png"
+        },...
+      ]
+    }
   }
   ```
 
@@ -106,23 +108,22 @@
 - Method: `GET`
 - Region: `na`(North America), `eu`(Europe), `br`(Brazil), `ap`(Asia-Pacific), `kr`(Korea), `cn`(China), `jp`(Japan), `la-s`(LATAM-South), `la-n`(LATAM-North), `oce`(Oceania), `mn`(MENA), `gc`(Game Changers)
 - Response:
-  ```python
+  ```json
   {
-      "data": {
-          "status": 200,
-          'segments': [
-              {
-                  'rank': str,
-                  'team': str,
-                  'country': str,
-                  'last_played': str,
-                  'last_played_team_logo': str,
-                  'record': str,
-                  'earnings': str,
-                  'logo': str
-              }
-          ],
-      }
+    "status": 200,
+    "data": [
+      {
+        "rank": "1",
+        "team": "FNATIC",
+        "country": "Europe",
+        "last_played": "4d ago",
+        "last_played_team": "vs. Karmine C",
+        "last_played_team_logo": "//owcdn.net/img/627403a0d9e48.png",
+        "record": "10–0",
+        "earnings": "$427,285",
+        "logo": "//owcdn.net/img/62a40cc2b5e29.png"
+      },...
+    ]
   }
   ```
 

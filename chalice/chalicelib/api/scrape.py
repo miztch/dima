@@ -140,8 +140,8 @@ class Vlr:
         return data
 
     @staticmethod
-    def vlr_score():
-        url = "https://www.vlr.gg/matches/results"
+    def vlr_score(page: str = 1):
+        url = f"https://www.vlr.gg/matches/results?page={page}"
         resp = requests.get(url, headers=headers)
         html = HTMLParser(resp.text)
         status = resp.status_code

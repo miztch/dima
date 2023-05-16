@@ -18,7 +18,9 @@ def VLR_news():
 
 @app.route('/matches/results')
 def VLR_scores():
-    return vlr.vlr_score()
+    request = app.current_request
+    page = request.query_params.get('page') if request.query_params else ''
+    return vlr.vlr_score(page)
 
 
 @app.route('/stats/{region}/{timespan}')

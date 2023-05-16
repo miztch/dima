@@ -271,8 +271,8 @@ class Vlr:
         return data
 
     @staticmethod
-    def vlr_upcoming():
-        url = "https://www.vlr.gg/matches"
+    def vlr_upcoming(page: str = 1):
+        url = f"https://www.vlr.gg/matches?page={page}"
         resp = requests.get(url, headers=headers)
         html = HTMLParser(resp.text)
         status = resp.status_code

@@ -62,7 +62,9 @@ def VLR_ranks(region):
 
 @app.route('/matches/upcoming')
 def VLR_upcoming():
-    return vlr.vlr_upcoming()
+    request = app.current_request
+    page = request.query_params.get('page') if request.query_params else ''
+    return vlr.vlr_upcoming(page)
 
 
 @app.route('/events')

@@ -20,7 +20,7 @@
           "date": "May 9, 2023",
           "author": "eutalyx",
           "url_path": "/209209/tenz-returns-to-sentinels-active-roster"
-        },...
+        },
       ]
     }
   }
@@ -47,7 +47,7 @@
           "tournament_name": "Champions Tour 2023: Americas League",
           "match_page": "/183815/nrg-esports-vs-loud-champions-tour-2023-americas-league-w7",
           "tournament_icon": "https://owcdn.net/img/640f5ab71dfbb.png"
-        },...
+        },
       ]
     }
   }
@@ -74,7 +74,7 @@
           "tournament_name": "Champions Tour 2023: EMEA League",
           "match_page": "/184057/fnatic-vs-natus-vincere-champions-tour-2023-emea-league-w8",
           "tournament_icon": "https://owcdn.net/img/640f5accac10a.png"
-        },...
+        },
       ]
     }
   }
@@ -97,7 +97,7 @@
           "prize": "TBD",
           "event_page": "/event/1190/champions-tour-2023-emea-league",
           "event_icon": "https://owcdn.net/img/640f5accac10a.png"
-        },...
+        },
       ]
     }
   }
@@ -122,7 +122,7 @@
         "record": "10–0",
         "earnings": "$427,285",
         "logo": "//owcdn.net/img/62a40cc2b5e29.png"
-      },...
+      },
     ]
   }
   ```

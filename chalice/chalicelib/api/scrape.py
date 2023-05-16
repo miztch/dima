@@ -25,14 +25,14 @@ class Vlr:
         html, status_code = resp.text, resp.status_code
         return HTMLParser(html), status_code
 
-    def vlr_recent(self):
+    def vlr_recent(self, page: str = 1):
         """
             This function is getting the news articles from the website and
             returning the data in a dictionary.
             :return: a dictionary with the key "data" and the value of the dictionary is another dictionary with the
             keys "status" and "segments".
             """
-        url = "https://www.vlr.gg/news"
+        url = f"https://www.vlr.gg/news?page={page}"
         html, status = self.get_parse(url)
         result = []
         for item in html.css('a.wf-module-item'):
@@ -140,8 +140,8 @@ class Vlr:
         return data
 
     @staticmethod
-    def vlr_score():
-        url = "https://www.vlr.gg/matches/results"
+    def vlr_score(page: str = 1):
+        url = f"https://www.vlr.gg/matches/results?page={page}"
         resp = requests.get(url, headers=headers)
         html = HTMLParser(resp.text)
         status = resp.status_code
@@ -271,8 +271,8 @@ class Vlr:
         return data
 
     @staticmethod
-    def vlr_upcoming():
-        url = "https://www.vlr.gg/matches"
+    def vlr_upcoming(page: str = 1):
+        url = f"https://www.vlr.gg/matches?page={page}"
         resp = requests.get(url, headers=headers)
         html = HTMLParser(resp.text)
         status = resp.status_code
@@ -353,8 +353,10 @@ class Vlr:
         return data
 
     @staticmethod
-    def vlr_events():
+    def vlr_events(page: str = ''):
         url = "https://www.vlr.gg/events"
+        if page:
+            url = f"https://www.vlr.gg/events?page={page}"
         resp = requests.get(url, headers=headers)
         html = HTMLParser(resp.text)
         status = resp.status_code

@@ -73,7 +73,9 @@ def VLR_upcoming():
 
 @app.route('/events')
 def VLR_events():
-    return vlr.vlr_events()
+    request = app.current_request
+    page = request.query_params.get('page') if request.query_params else ''
+    return vlr.vlr_events(page)
 
 
 @app.route('/health')

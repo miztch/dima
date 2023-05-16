@@ -353,8 +353,10 @@ class Vlr:
         return data
 
     @staticmethod
-    def vlr_events():
+    def vlr_events(page: str = ''):
         url = "https://www.vlr.gg/events"
+        if page:
+            url = f"https://www.vlr.gg/events?page={page}"
         resp = requests.get(url, headers=headers)
         html = HTMLParser(resp.text)
         status = resp.status_code

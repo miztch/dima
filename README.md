@@ -1,6 +1,8 @@
 # dima
 
 - An unofficial & simple API for [vlr.gg](https://www.vlr.gg/) upcoming matches
+  - get matches information from DynamoDB
+    - source data is provided by [sasha](https://github.com/miztch/sasha), scraper for upcoming matches
   - named after the real name of Valorant agent Neon 🩹⚡
 
 ## Example

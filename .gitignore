@@ -129,7 +129,7 @@ dmypy.json
 .pyre/
 
 # aws-chalice
-chalice/.chalice/
-chalice/.chalice/deployed
-chalice/.chalice/deployments/
-chalice/.chalice/venv/
+api/.chalice/
+api/.chalice/deployed
+api/.chalice/deployments/
+api/.chalice/venv/

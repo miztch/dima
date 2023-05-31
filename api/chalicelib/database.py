@@ -2,7 +2,6 @@ import logging
 import os
 import boto3
 from boto3.dynamodb.conditions import Key, Attr
-import uuid
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)

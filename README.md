@@ -40,10 +40,29 @@ $ curl endpoint/api/matches?date=2023-05-28
 
 ## usage
 
+### for quick trial
+
 - In advance, You may have to deploy [sasha](https://github.com/miztch/sasha), data source of dima.
 - You can deploy with [AWS Chalice](https://github.com/aws/chalice)
+
 ```bash
-$ cd chalice
-$ chalice deploy
-$ curl endpoint/api
+table=YOUR_SASHA_TABLE_NAME
+sed -i -e 's/SASHA_DYNAMODB_TABLE_NAME/$table/g' api/.chalice/config_template.json
+mv api/.chalice/config_template.json api/.chalice/config.json
+
+cd api
+chalice deploy
+curl http://${your-api-endpoint}/api/
+```
+
+### for parmanent deployment
+
+- You can use AWS SAM template (`template.yaml`)
+  - Custom domain with ACM / Route53 Hostzone is implemented. Please remove it if you don't need.
+
+```bash
+sam build
+sam deploy --guided --capabilities CAPABILITY_IAM
+
+curl http://${your-custom-domain-endpoint}/
 ```

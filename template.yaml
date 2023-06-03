@@ -10,14 +10,17 @@ Parameters:
       - dev
       - stag
       - production
-  APIDomainName:
-    Description: API domain name
-    Type: String
   SashaTableName:
     Description: DynamoDB table name of sasha
     Type: String
+  APIDomainName:
+    Description: API domain name
+    Type: String
   CertificateArn:
     Description: ACM certificate arn
+    Type: String
+  Route53HostedZoneId:
+    Description: Route53 hostzone id for the APIDomainName
     Type: String
   DaysToRetainLogs:
     Description: days to retain logs in CloudWatch
@@ -68,6 +71,17 @@ Resources:
       DomainName: !Ref ApiGatewayCustomDomain
       RestApiId: !Ref RestAPI
       Stage: api
+
+  DNSRecord:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      HostedZoneId: !Ref Route53HostedZoneId
+      Name: !Ref ApiGatewayCustomDomain
+      Type: A
+      AliasTarget:
+        DNSName: !GetAtt ApiGatewayCustomDomain.DistributionDomainName
+        EvaluateTargetHealth: False
+        HostedZoneId: !GetAtt ApiGatewayCustomDomain.DistributionHostedZoneId
 
   RestAPI:
     Type: AWS::Serverless::Api
@@ -146,6 +160,8 @@ Outputs:
     Value: !GetAtt APIHandler.Arn
   APIHandlerName:
     Value: !Ref APIHandler
+  CustomEndpointURL:
+    Value: !Sub 'https://${APIDomainName}/'
   EndpointURL:
     Value: !Sub 'https://${RestAPI}.execute-api.${AWS::Region}.${AWS::URLSuffix}/api/'
   RestAPIId:

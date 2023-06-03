@@ -20,7 +20,7 @@ def matches():
     return upcoming matches list.
     '''
     request = app.current_request
-    app.log.info('Request: {}'.format(request.to_dict()))
+    app.log.debug('Request: {}'.format(request.to_dict()))
 
     # default date for search: today
     date = datetime.strftime(datetime.now(), '%Y-%m-%d')
@@ -34,17 +34,17 @@ def matches():
 
         try:
             if re.fullmatch(pattern, param) is not None:
-                app.log.info(
+                app.log.debug(
                     'Date format in query parameter is valid. input: {}'.format(param))
                 date = param
             else:
-                app.log.info(
+                app.log.debug(
                     'Date format in query parameter is invalid or empty. input: {}'.format(param))
         except TypeError:
-            app.log.info(
+            app.log.debug(
                 'query parameter with invalid format given. input: {}'.format(param))
 
     matches = database.query(date)
-    app.log.info('Return {} items.'.format(len(matches)))
+    app.log.debug('Return {} items.'.format(len(matches)))
 
     return matches

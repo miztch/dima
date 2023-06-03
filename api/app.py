@@ -1,11 +1,7 @@
-import logging
 import re
 from datetime import datetime
 from chalice import Chalice
 from chalicelib import database
-
-logger = logging.getLogger()
-logger.setLevel(logging.INFO)
 
 app = Chalice(app_name='dima')
 
@@ -24,7 +20,7 @@ def matches():
     return upcoming matches list.
     '''
     request = app.current_request
-    logger.info('Request: {}'.format(request.to_dict()))
+    app.log.info('Request: {}'.format(request.to_dict()))
 
     # default date for search: today
     date = datetime.strftime(datetime.now(), '%Y-%m-%d')
@@ -38,17 +34,17 @@ def matches():
 
         try:
             if re.fullmatch(pattern, param) is not None:
-                logger.info(
+                app.log.info(
                     'Date format in query parameter is valid. input: {}'.format(param))
                 date = param
             else:
-                logger.info(
+                app.log.info(
                     'Date format in query parameter is invalid or empty. input: {}'.format(param))
         except TypeError:
-            logger.info(
+            app.log.info(
                 'query parameter with invalid format given. input: {}'.format(param))
 
     matches = database.query(date)
-    logger.info('Return {} items.'.format(len(matches)))
+    app.log.info('Return {} items.'.format(len(matches)))
 
     return matches

@@ -55,7 +55,7 @@ chalice deploy
 curl http://${your-api-endpoint}/api/
 ```
 
-### for parmanent deployment
+### for permanent deployment
 
 - You can use AWS SAM template (`template.yaml`)
   - Custom domain with ACM / Route53 Hostzone is implemented. Please remove it if you don't need.

@@ -1,0 +1,152 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: dima
+
+Parameters:
+  SAMDeployStage:
+    Description: Deployment stage
+    Type: String
+    AllowedValues:
+      - dev
+      - stag
+      - production
+  APIDomainName:
+    Description: API domain name
+    Type: String
+  SashaTableName:
+    Description: DynamoDB table name of sasha
+    Type: String
+  CertificateArn:
+    Description: ACM certificate arn
+    Type: String
+  DaysToRetainLogs:
+    Description: days to retain logs in CloudWatch
+    Type: Number
+    Default: 30
+
+Resources:
+  APIHandler:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: api/
+      Description: dima api handler
+      Handler: app.app
+      Runtime: python3.9
+      MemorySize: 128
+      Timeout: 60
+      Tags:
+        aws-chalice: !Sub version=1.28.0:stage=${SAMDeployStage}:app=dima
+      Tracing: PassThrough
+      Policies:
+        - AmazonDynamoDBFullAccess
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref SashaTableName
+
+  APIHandlerInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref APIHandler
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub 'arn:${AWS::Partition}:execute-api:${AWS::Region}:${AWS::AccountId}:${RestAPI}/*'
+
+  ApiGatewayCustomDomain:
+    Type: AWS::ApiGateway::DomainName
+    Properties:
+      CertificateArn: !Ref CertificateArn
+      DomainName: !Ref APIDomainName
+      EndpointConfiguration:
+        Types:
+        - EDGE
+      SecurityPolicy: TLS_1_2
+
+  ApiGatewayCustomDomainMapping:
+    Type: AWS::ApiGateway::BasePathMapping
+    Properties:
+      BasePath: (none)
+      DomainName: !Ref ApiGatewayCustomDomain
+      RestApiId: !Ref RestAPI
+      Stage: api
+
+  RestAPI:
+    Type: AWS::Serverless::Api
+    Properties:
+      EndpointConfiguration:
+        Type: EDGE
+      StageName: api
+      DefinitionBody:
+        swagger: '2.0'
+        info:
+          title: dima
+          version: '1.0'
+        schemes:
+        - https
+        paths:
+          /:
+            get:
+              summary: return fixed response.
+              consumes:
+              - application/json
+              produces:
+              - application/json
+              responses:
+                '200':
+                  description: 200 response
+              x-amazon-apigateway-integration:
+                contentHandling: CONVERT_TO_TEXT
+                httpMethod: POST
+                passthroughBehavior: when_no_match
+                responses:
+                  default:
+                    statusCode: '200'
+                type: aws_proxy
+                uri:
+                  Fn::Sub: arn:${AWS::Partition}:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${APIHandler.Arn}/invocations
+          /matches:
+            get:
+              summary: return upcoming matches list.
+              consumes:
+              - application/json
+              produces:
+              - application/json
+              responses:
+                '200':
+                  description: 200 response
+              x-amazon-apigateway-integration:
+                contentHandling: CONVERT_TO_TEXT
+                httpMethod: POST
+                passthroughBehavior: when_no_match
+                responses:
+                  default:
+                    statusCode: '200'
+                type: aws_proxy
+                uri:
+                  Fn::Sub: arn:${AWS::Partition}:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${APIHandler.Arn}/invocations
+        x-amazon-apigateway-binary-media-types:
+        - application/octet-stream
+        - application/x-tar
+        - application/zip
+        - audio/basic
+        - audio/ogg
+        - audio/mp4
+        - audio/mpeg
+        - audio/wav
+        - audio/webm
+        - image/png
+        - image/jpg
+        - image/jpeg
+        - image/gif
+        - video/ogg
+        - video/mpeg
+        - video/webm
+
+Outputs:
+  APIHandlerArn:
+    Value: !GetAtt APIHandler.Arn
+  APIHandlerName:
+    Value: !Ref APIHandler
+  EndpointURL:
+    Value: !Sub 'https://${RestAPI}.execute-api.${AWS::Region}.${AWS::URLSuffix}/api/'
+  RestAPIId:
+    Value: !Ref RestAPI

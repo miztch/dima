@@ -133,3 +133,7 @@ api/.chalice/
 api/.chalice/deployed
 api/.chalice/deployments/
 api/.chalice/venv/
+
+# aws-sam
+.aws-sam
+samconfig.toml

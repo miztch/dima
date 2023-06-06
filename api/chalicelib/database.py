@@ -28,7 +28,8 @@ def query(date):
 
     if response['Items']:
         for item in response['Items']:
-            item['id'] = str(item['id'])
+            item['id'] = int(item['id'])
+            item['bestOf'] = int(item['bestOf'])
 
     logger.info('Found {} items.'.format(len(response['Items'])))
     return response['Items']

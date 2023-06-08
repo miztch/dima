@@ -1,9 +1,8 @@
 on:
   push:
     branches:
-      - add-github-workflow
+      - main
     paths-ignore:
-      # - ".github/workflows/*"
       - "**.md"      
 jobs:
   build-and-deploy:

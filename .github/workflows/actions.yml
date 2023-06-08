@@ -1,0 +1,70 @@
+on:
+  push:
+    branches:
+      - add-github-workflow
+    paths-ignore:
+      # - ".github/workflows/*"
+      - "**.md"      
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Install jq
+        uses: dcarbone/install-jq-action@v1.0.1
+      - name: Setup Python
+        uses: actions/setup-python@v3
+      - name: Setup AWS SAM CLI
+        uses: aws-actions/setup-sam@v2
+      - name: Setup AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+      - name: Require Variables
+        run: |
+          SASHA_TABLE_NAME=` \
+            aws cloudformation describe-stacks --stack-name sasha \
+          | jq -r '.Stacks[].Outputs[] | select(.OutputKey == "VlrMatchesTableName"  ) | .OutputValue'`
+          echo "SASHA_TABLE_NAME=$SASHA_TABLE_NAME" >> $GITHUB_ENV 
+      - name: Prepare SAM parameters
+        env:
+          SAM_DEPLOY_STAGE: ${{ vars.SAM_DEPLOY_STAGE }}
+          SASHA_TABLE_NAME: ${{ env.SASHA_TABLE_NAME }}
+          API_DOMAIN_NAME: ${{ secrets.API_DOMAIN_NAME }}
+          CERTIFICATE_ARN: ${{ secrets.CERTIFICATE_ARN }}
+          ROUTE53_HOSTED_ZONE_ID: ${{ secrets.ROUTE53_HOSTED_ZONE_ID }}
+          DAYS_TO_RETAIN_LOGS: ${{ vars.DAYS_TO_RETAIN_LOGS }}
+        run: |
+          tee params.json << EOF
+          { 
+            "SAMDeployStage": "${SAM_DEPLOY_STAGE}",
+            "SashaTableName": "${SASHA_TABLE_NAME}",
+            "APIDomainName": "${API_DOMAIN_NAME}",
+            "CertificateArn": "${CERTIFICATE_ARN}",
+            "Route53HostedZoneId": "${ROUTE53_HOSTED_ZONE_ID}",
+            "DaysToRetainLogs": "${DAYS_TO_RETAIN_LOGS}"
+          }
+          EOF
+      - name: Build SAM packages
+        run: sam build --use-container
+      - name: Deploy SAM application
+        env:
+          BUCKET_NAME: ${{ secrets.PROVISIONING_BUCKET_NAME }}
+          REGION: ${{ secrets.AWS_REGION }}
+          STACK_NAME: ${{ vars.STACK_NAME }}
+        run: |
+          sam deploy \
+            --template-file .aws-sam/build/template.yaml \
+            --stack-name $STACK_NAME \
+            --s3-bucket $BUCKET_NAME \
+            --s3-prefix $STACK_NAME \
+            --capabilities CAPABILITY_IAM CAPABILITY_AUTO_EXPAND \
+            --region $REGION \
+            --force-upload \
+            --no-confirm-changeset \
+            --no-fail-on-empty-changeset \
+            --parameter-overrides "$(jq -j 'to_entries[] | "\(.key)='\\\"'\(.value)'\\\"''\ '"' params.json)"

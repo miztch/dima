@@ -1,10 +1,10 @@
-import logging
 import os
+
 import boto3
 from boto3.dynamodb.conditions import Key, Attr
+from chalicelib import log
 
-logger = logging.getLogger()
-logger.setLevel(logging.INFO)
+logger = log.getLogger()
 
 
 def _get_table():

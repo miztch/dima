@@ -1,5 +1,7 @@
 from chalice import Chalice
-from chalicelib import database, date_format
+from chalicelib import database, date_format, log
+
+logger = log.getLogger()
 
 app = Chalice(app_name="dima")
 
@@ -18,7 +20,7 @@ def matches():
     return upcoming matches list.
     """
     request = app.current_request
-    app.log.debug("Request: {}".format(request.to_dict()))
+    logger.debug("Request: {}".format(request.to_dict()))
 
     # default date for search: today
     date = date_format.get_default()
@@ -32,6 +34,6 @@ def matches():
             date = param
 
     matches = database.query(date)
-    app.log.debug("Return {} items.".format(len(matches)))
+    logger.debug("Return {} items.".format(len(matches)))
 
     return matches

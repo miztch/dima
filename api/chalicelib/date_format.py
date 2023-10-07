@@ -1,9 +1,9 @@
-import logging
 import re
 from datetime import datetime
 
-logger = logging.getLogger()
-logger.setLevel(logging.INFO)
+from chalicelib import log
+
+logger = log.getLogger()
 
 
 def validate(date):

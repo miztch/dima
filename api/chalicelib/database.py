@@ -32,7 +32,7 @@ def query(date):
     for item in items:
         item["id"] = int(item["id"])
         item["bestOf"] = int(item["bestOf"])
-    result.extend(response.get("Items", []))
+    result.extend(items)
 
     while "LastEvaluatedKey" in response:
         response = table.scan(
@@ -42,7 +42,7 @@ def query(date):
         for item in items:
             item["id"] = int(item["id"])
             item["bestOf"] = int(item["bestOf"])
-        result.extend(response.get("Items", []))
+        result.extend(items)
 
     logger.info("Found {} items.".format(len(result)))
     return result

@@ -22,12 +22,27 @@ def query(date):
     table = _get_table()
 
     logger.info("Query table. date: {}".format(date))
-    response = table.scan(FilterExpression=Attr("startTime").begins_with(date))
 
-    if response["Items"]:
-        for item in response["Items"]:
+    filter_expression = Attr("startTime").begins_with(date)
+    result = []
+
+    response = table.scan(FilterExpression=filter_expression)
+
+    items = response.get("Items", [])
+    for item in items:
+        item["id"] = int(item["id"])
+        item["bestOf"] = int(item["bestOf"])
+    result.extend(response.get("Items", []))
+
+    while "LastEvaluatedKey" in response:
+        response = table.scan(
+            FilterExpression=filter_expression,
+            ExclusiveStartKey=response["LastEvaluatedKey"],
+        )
+        for item in items:
             item["id"] = int(item["id"])
             item["bestOf"] = int(item["bestOf"])
+        result.extend(response.get("Items", []))
 
-    logger.info("Found {} items.".format(len(response["Items"])))
-    return response["Items"]
+    logger.info("Found {} items.".format(len(result)))
+    return result

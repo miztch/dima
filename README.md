@@ -17,26 +17,25 @@ $ curl endpoint/api/matches?date=2023-05-28
 
 ```json
 [
-    {
-        "matchName": "Playoffs: Grand Final",
-        "startTime": "2023-05-28T15:00:00+0000",
-        "eventName": "Champions Tour 2023: EMEA League",
-        "teams": [
-            {
-                "title": "FNATIC"
-            },
-            {
-                "title": "Team Liquid"
-            }
-        ],
-        "match_page": "/213198/fnatic-vs-team-liquid-champions-tour-2023-emea-league-gf",
-        "bestOf": "5",
-        "id": "213198",
-        "eventCountryFlag": "de"
-    }
+  {
+    "matchName": "Playoffs: Grand Final",
+    "startTime": "2023-05-28T15:00:00+0000",
+    "eventName": "Champions Tour 2023: EMEA League",
+    "teams": [
+      {
+        "title": "FNATIC"
+      },
+      {
+        "title": "Team Liquid"
+      }
+    ],
+    "matchPage": "/213198/fnatic-vs-team-liquid-champions-tour-2023-emea-league-gf",
+    "bestOf": "5",
+    "id": "213198",
+    "eventCountryFlag": "de"
+  }
 ]
 ```
-
 
 ## usage
 

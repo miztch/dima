@@ -1,4 +1,4 @@
-AWSTemplateFormatVersion: '2010-09-09'
+AWSTemplateFormatVersion: "2010-09-09"
 Transform: AWS::Serverless-2016-10-31
 Description: dima
 
@@ -52,7 +52,7 @@ Resources:
       Action: lambda:InvokeFunction
       FunctionName: !Ref APIHandler
       Principal: apigateway.amazonaws.com
-      SourceArn: !Sub 'arn:${AWS::Partition}:execute-api:${AWS::Region}:${AWS::AccountId}:${RestAPI}/*'
+      SourceArn: !Sub "arn:${AWS::Partition}:execute-api:${AWS::Region}:${AWS::AccountId}:${RestAPI}/*"
 
   ApiGatewayCustomDomain:
     Type: AWS::ApiGateway::DomainName
@@ -61,7 +61,7 @@ Resources:
       DomainName: !Ref APIDomainName
       EndpointConfiguration:
         Types:
-        - EDGE
+          - EDGE
       SecurityPolicy: TLS_1_2
 
   ApiGatewayCustomDomainMapping:
@@ -90,22 +90,22 @@ Resources:
         Type: EDGE
       StageName: api
       DefinitionBody:
-        swagger: '2.0'
+        swagger: "2.0"
         info:
           title: dima
-          version: '1.0'
+          version: "1.0"
         schemes:
-        - https
+          - https
         paths:
           /:
             get:
               summary: return fixed response.
               consumes:
-              - application/json
+                - application/json
               produces:
-              - application/json
+                - application/json
               responses:
-                '200':
+                "200":
                   description: 200 response
               x-amazon-apigateway-integration:
                 contentHandling: CONVERT_TO_TEXT
@@ -113,7 +113,7 @@ Resources:
                 passthroughBehavior: when_no_match
                 responses:
                   default:
-                    statusCode: '200'
+                    statusCode: "200"
                 type: aws_proxy
                 uri:
                   Fn::Sub: arn:${AWS::Partition}:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${APIHandler.Arn}/invocations
@@ -121,11 +121,11 @@ Resources:
             get:
               summary: return upcoming matches list.
               consumes:
-              - application/json
+                - application/json
               produces:
-              - application/json
+                - application/json
               responses:
-                '200':
+                "200":
                   description: 200 response
               x-amazon-apigateway-integration:
                 contentHandling: CONVERT_TO_TEXT
@@ -133,27 +133,27 @@ Resources:
                 passthroughBehavior: when_no_match
                 responses:
                   default:
-                    statusCode: '200'
+                    statusCode: "200"
                 type: aws_proxy
                 uri:
                   Fn::Sub: arn:${AWS::Partition}:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${APIHandler.Arn}/invocations
         x-amazon-apigateway-binary-media-types:
-        - application/octet-stream
-        - application/x-tar
-        - application/zip
-        - audio/basic
-        - audio/ogg
-        - audio/mp4
-        - audio/mpeg
-        - audio/wav
-        - audio/webm
-        - image/png
-        - image/jpg
-        - image/jpeg
-        - image/gif
-        - video/ogg
-        - video/mpeg
-        - video/webm
+          - application/octet-stream
+          - application/x-tar
+          - application/zip
+          - audio/basic
+          - audio/ogg
+          - audio/mp4
+          - audio/mpeg
+          - audio/wav
+          - audio/webm
+          - image/png
+          - image/jpg
+          - image/jpeg
+          - image/gif
+          - video/ogg
+          - video/mpeg
+          - video/webm
 
 Outputs:
   APIHandlerArn:
@@ -161,8 +161,8 @@ Outputs:
   APIHandlerName:
     Value: !Ref APIHandler
   CustomEndpointURL:
-    Value: !Sub 'https://${APIDomainName}/'
+    Value: !Sub "https://${APIDomainName}/"
   EndpointURL:
-    Value: !Sub 'https://${RestAPI}.execute-api.${AWS::Region}.${AWS::URLSuffix}/api/'
+    Value: !Sub "https://${RestAPI}.execute-api.${AWS::Region}.${AWS::URLSuffix}/api/"
   RestAPIId:
     Value: !Ref RestAPI

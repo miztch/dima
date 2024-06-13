@@ -1,7 +1,7 @@
 import os
 
 import boto3
-from boto3.dynamodb.conditions import Key, Attr
+from boto3.dynamodb.conditions import Key
 from chalicelib import log
 
 logger = log.getLogger()
@@ -16,17 +16,16 @@ def _get_table():
 
 def query(date):
     """
-    scan DynamoDB table by following condition.
-    - 'startTime' begins with $date
+    query DynamoDB table by following condition.
+    - 'startDate' equals to $date
     """
     table = _get_table()
 
     logger.info("Query table. date: {}".format(date))
 
-    filter_expression = Attr("startTime").begins_with(date)
     result = []
 
-    response = table.scan(FilterExpression=filter_expression)
+    response = table.query(KeyConditionExpression=Key("startDate").eq(date))
 
     items = response.get("Items", [])
     for item in items:
@@ -35,8 +34,8 @@ def query(date):
     result.extend(items)
 
     while "LastEvaluatedKey" in response:
-        response = table.scan(
-            FilterExpression=filter_expression,
+        response = table.query(
+            KeyConditionExpression=Key("startDate").eq(date),
             ExclusiveStartKey=response["LastEvaluatedKey"],
         )
         for item in items:

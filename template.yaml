@@ -2,14 +2,15 @@ AWSTemplateFormatVersion: "2010-09-09"
 Transform: AWS::Serverless-2016-10-31
 Description: dima
 
+Globals:
+  Api:
+    OpenApiVersion: 3.0.2
+
 Parameters:
-  SAMDeployStage:
-    Description: Deployment stage
+  ApplicationName:
+    Description: Application name
     Type: String
-    AllowedValues:
-      - dev
-      - stag
-      - production
+    Default: dima
   SashaTableName:
     Description: DynamoDB table name of sasha
     Type: String
@@ -22,144 +23,71 @@ Parameters:
   Route53HostedZoneId:
     Description: Route53 hostzone id for the APIDomainName
     Type: String
-  DaysToRetainLogs:
-    Description: days to retain logs in CloudWatch
-    Type: Number
-    Default: 30
+  # DaysToRetainLogs:
+  #   Description: days to retain logs in CloudWatch
+  #   Type: Number
+  #   Default: 30
 
 Resources:
-  APIHandler:
-    Type: AWS::Serverless::Function
+  RestAPI:
+    Type: AWS::Serverless::Api
     Properties:
-      CodeUri: api/
-      Description: dima api handler
-      Handler: app.app
-      Runtime: python3.11
+      Name: !Ref ApplicationName
+      StageName: api
+      DefinitionBody:
+        Fn::Transform:
+          Name: AWS::Include
+          Parameters:
+            Location: api/openapi.yml
+      Domain:
+        BasePath: /
+        CertificateArn: !Ref CertificateArn
+        DomainName: !Ref APIDomainName
+        EndpointConfiguration: EDGE
+        Route53:
+          HostedZoneId: !Ref Route53HostedZoneId
+
+  Function:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: go1.x
+    Properties:
+      FunctionName: !Ref ApplicationName
+      CodeUri: .
+      Handler: bootstrap
+      Runtime: provided.al2023
       MemorySize: 128
-      Timeout: 60
-      Tags:
-        aws-chalice: !Sub version=1.28.0:stage=${SAMDeployStage}:app=dima
+      Timeout: 30
       Tracing: PassThrough
       Policies:
         - AmazonDynamoDBFullAccess
       Environment:
         Variables:
           TABLE_NAME: !Ref SashaTableName
+      Events:
+        Root:
+          Type: Api
+          Properties:
+            Path: /
+            Method: GET
+            RestApiId: !Ref RestAPI
+        Matches:
+          Type: Api
+          Properties:
+            Path: /matches
+            Method: GET
+            RestApiId: !Ref RestAPI
 
-  APIHandlerInvokePermission:
-    Type: AWS::Lambda::Permission
+  FunctionLogGroup:
+    Type: AWS::Logs::LogGroup
     Properties:
-      Action: lambda:InvokeFunction
-      FunctionName: !Ref APIHandler
-      Principal: apigateway.amazonaws.com
-      SourceArn: !Sub "arn:${AWS::Partition}:execute-api:${AWS::Region}:${AWS::AccountId}:${RestAPI}/*"
-
-  ApiGatewayCustomDomain:
-    Type: AWS::ApiGateway::DomainName
-    Properties:
-      CertificateArn: !Ref CertificateArn
-      DomainName: !Ref APIDomainName
-      EndpointConfiguration:
-        Types:
-          - EDGE
-      SecurityPolicy: TLS_1_2
-
-  ApiGatewayCustomDomainMapping:
-    Type: AWS::ApiGateway::BasePathMapping
-    Properties:
-      BasePath: (none)
-      DomainName: !Ref ApiGatewayCustomDomain
-      RestApiId: !Ref RestAPI
-      Stage: api
-
-  DNSRecord:
-    Type: AWS::Route53::RecordSet
-    Properties:
-      HostedZoneId: !Ref Route53HostedZoneId
-      Name: !Ref ApiGatewayCustomDomain
-      Type: A
-      AliasTarget:
-        DNSName: !GetAtt ApiGatewayCustomDomain.DistributionDomainName
-        EvaluateTargetHealth: False
-        HostedZoneId: !GetAtt ApiGatewayCustomDomain.DistributionHostedZoneId
-
-  RestAPI:
-    Type: AWS::Serverless::Api
-    Properties:
-      EndpointConfiguration:
-        Type: EDGE
-      StageName: api
-      DefinitionBody:
-        swagger: "2.0"
-        info:
-          title: dima
-          version: "1.0"
-        schemes:
-          - https
-        paths:
-          /:
-            get:
-              summary: return fixed response.
-              consumes:
-                - application/json
-              produces:
-                - application/json
-              responses:
-                "200":
-                  description: 200 response
-              x-amazon-apigateway-integration:
-                contentHandling: CONVERT_TO_TEXT
-                httpMethod: POST
-                passthroughBehavior: when_no_match
-                responses:
-                  default:
-                    statusCode: "200"
-                type: aws_proxy
-                uri:
-                  Fn::Sub: arn:${AWS::Partition}:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${APIHandler.Arn}/invocations
-          /matches:
-            get:
-              summary: return upcoming matches list.
-              consumes:
-                - application/json
-              produces:
-                - application/json
-              responses:
-                "200":
-                  description: 200 response
-              x-amazon-apigateway-integration:
-                contentHandling: CONVERT_TO_TEXT
-                httpMethod: POST
-                passthroughBehavior: when_no_match
-                responses:
-                  default:
-                    statusCode: "200"
-                type: aws_proxy
-                uri:
-                  Fn::Sub: arn:${AWS::Partition}:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${APIHandler.Arn}/invocations
-        x-amazon-apigateway-binary-media-types:
-          - application/octet-stream
-          - application/x-tar
-          - application/zip
-          - audio/basic
-          - audio/ogg
-          - audio/mp4
-          - audio/mpeg
-          - audio/wav
-          - audio/webm
-          - image/png
-          - image/jpg
-          - image/jpeg
-          - image/gif
-          - video/ogg
-          - video/mpeg
-          - video/webm
+      LogGroupName: !Sub /aws/lambda/${Function}
 
 Outputs:
-  APIHandlerArn:
-    Value: !GetAtt APIHandler.Arn
-  APIHandlerName:
-    Value: !Ref APIHandler
+  FunctionArn:
+    Value: !GetAtt Function.Arn
+  FunctionName:
+    Value: !Ref Function
   CustomEndpointURL:
     Value: !Sub "https://${APIDomainName}/"
   EndpointURL:

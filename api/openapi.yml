@@ -1,0 +1,43 @@
+openapi: 3.0.0
+info:
+  title: dima
+  description: competitive VALORANT match API
+  version: "1.0"
+servers:
+  - url: dima.mizt.ch
+
+paths:
+  /:
+    get:
+      responses:
+        "200":
+          description: "200 response"
+          content: {}
+      x-amazon-apigateway-integration:
+        type: "aws_proxy"
+        httpMethod: "POST"
+        uri:
+          Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Function.Arn}/invocations"
+        passthroughBehavior: "when_no_match"
+        contentHandling: "CONVERT_TO_TEXT"
+        responses:
+          default:
+            statusCode: "200"
+  /matches:
+    get:
+      responses:
+        "200":
+          description: "200 response"
+          content: {}
+      x-amazon-apigateway-integration:
+        type: "aws_proxy"
+        httpMethod: "POST"
+        uri:
+          Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Function.Arn}/invocations"
+        passthroughBehavior: "when_no_match"
+        contentHandling: "CONVERT_TO_TEXT"
+        responses:
+          default:
+            statusCode: "200"
+
+components: {}

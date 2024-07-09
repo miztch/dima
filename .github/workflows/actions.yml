@@ -10,20 +10,24 @@ on:
 permissions:
   id-token: write
   contents: read
-    
+
 jobs:
   build-and-deploy:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     environment: production
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
       - name: Install jq
         uses: dcarbone/install-jq-action@v2.1.0
-      - name: Setup Python
-        uses: actions/setup-python@v5
+      - name: Setup Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: "1.21.x"
       - name: Setup AWS SAM CLI
         uses: aws-actions/setup-sam@v2
+        with:
+          use-installer: true
       - name: Setup AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4.0.2
         with:
@@ -35,10 +39,10 @@ jobs:
           SASHA_TABLE_NAME=` \
             aws cloudformation describe-stacks --stack-name sasha \
           | jq -r '.Stacks[].Outputs[] | select(.OutputKey == "VlrMatchesTableName"  ) | .OutputValue'`
-          echo "SASHA_TABLE_NAME=$SASHA_TABLE_NAME" >> $GITHUB_ENV 
+          echo "SASHA_TABLE_NAME=$SASHA_TABLE_NAME" >> $GITHUB_ENV
       - name: Prepare SAM parameters
         env:
-          SAM_DEPLOY_STAGE: ${{ vars.SAM_DEPLOY_STAGE }}
+          APPLICATION_NAME: ${{ env.APPLICATION_NAME }}
           SASHA_TABLE_NAME: ${{ env.SASHA_TABLE_NAME }}
           API_DOMAIN_NAME: ${{ secrets.API_DOMAIN_NAME }}
           CERTIFICATE_ARN: ${{ secrets.CERTIFICATE_ARN }}
@@ -47,7 +51,7 @@ jobs:
         run: |
           tee params.json << EOF
           { 
-            "SAMDeployStage": "${SAM_DEPLOY_STAGE}",
+            "ApplicationName": "${APPLICATION_NAME}",
             "SashaTableName": "${SASHA_TABLE_NAME}",
             "APIDomainName": "${API_DOMAIN_NAME}",
             "CertificateArn": "${CERTIFICATE_ARN}",
@@ -56,7 +60,7 @@ jobs:
           }
           EOF
       - name: Build SAM packages
-        run: sam build --use-container
+        run: sam build
       - name: Deploy SAM application
         env:
           BUCKET_NAME: ${{ secrets.PROVISIONING_BUCKET_NAME }}

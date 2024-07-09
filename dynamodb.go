@@ -37,6 +37,9 @@ func (d *DynamoDBClient) QueryMatchesByStartDate(ctx context.Context, startDate 
 		ExpressionAttributeValues: expr.Values(),
 		KeyConditionExpression:    expr.KeyCondition(),
 	})
+
+	matches = []match{} // Initialize matches to an empty slice to avoid nil pointer dereference
+
 	for queryPaginator.HasMorePages() {
 		response, err := queryPaginator.NextPage(ctx)
 		if err != nil {

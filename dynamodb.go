@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"
 	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression"
@@ -32,7 +33,7 @@ func (d *DynamoDBClient) QueryMatchesByStartDate(ctx context.Context, startDate 
 	}
 
 	queryPaginator := dynamodb.NewQueryPaginator(d.client, &dynamodb.QueryInput{
-		TableName:                 &d.tableName,
+		TableName:                 aws.String(d.tableName),
 		ExpressionAttributeNames:  expr.Names(),
 		ExpressionAttributeValues: expr.Values(),
 		KeyConditionExpression:    expr.KeyCondition(),

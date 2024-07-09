@@ -55,5 +55,6 @@ func (d *DynamoDBClient) QueryMatchesByStartDate(ctx context.Context, startDate 
 
 		matches = append(matches, matchPage...)
 	}
-	return matches, err
+
+	return matches, nil
 }

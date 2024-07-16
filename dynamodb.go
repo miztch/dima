@@ -25,7 +25,7 @@ func NewDynamoDBClient(ctx context.Context, tableName string) (*DynamoDBClient, 
 	return &DynamoDBClient{client: client, tableName: tableName}, nil
 }
 
-func (d *DynamoDBClient) QueryMatchesByStartDate(ctx context.Context, startDate string) (matches []match, err error) {
+func (d *DynamoDBClient) QueryMatchesByStartDate(ctx context.Context, startDate string) (matches []Match, err error) {
 	keyEx := expression.Key("startDate").Equal(expression.Value(startDate))
 	expr, err := expression.NewBuilder().WithKeyCondition(keyEx).Build()
 	if err != nil {
@@ -39,7 +39,7 @@ func (d *DynamoDBClient) QueryMatchesByStartDate(ctx context.Context, startDate 
 		KeyConditionExpression:    expr.KeyCondition(),
 	})
 
-	matches = []match{} // Initialize matches to an empty slice to avoid nil pointer dereference
+	matches = []Match{} // Initialize matches to an empty slice to avoid nil pointer dereference
 
 	for queryPaginator.HasMorePages() {
 		response, err := queryPaginator.NextPage(ctx)
@@ -47,7 +47,7 @@ func (d *DynamoDBClient) QueryMatchesByStartDate(ctx context.Context, startDate 
 			return nil, fmt.Errorf("[error] failed to query matches by start date, %w", err)
 		}
 
-		var matchPage []match
+		var matchPage []Match
 		err = attributevalue.UnmarshalListOfMaps(response.Items, &matchPage)
 		if err != nil {
 			return nil, fmt.Errorf("[error] failed to unmarshal match page, %w", err)

@@ -1,17 +1,17 @@
 package main
 
-type match struct {
-	Name             string `json:"matchName" dynamodbabv:"matchName"`
-	StartTime        string `json:"startTime" dynamodbabv:"startTime"`
-	EventName        string `json:"eventName" dynamodbabv:"eventName"`
-	Teams            []team `json:"teams" dynamodbabv:"teams"`
-	StartDate        string `json:"startDate" dynamodbabv:"startDate"`
-	PagePath         string `json:"pagePath" dynamodbabv:"pagePath"`
-	BestOf           int    `json:"bestOf" dynamodbabv:"bestOf"`
-	Id               int    `json:"id" dynamodbabv:"id"`
-	EventCountryFlag string `json:"eventCountryFlag" dynamodbabv:"eventCountryFlag"`
+type Match struct {
+	Name             string `json:"matchName" dynamodbav:"matchName"`
+	StartTime        string `json:"startTime" dynamodbav:"startTime"`
+	EventName        string `json:"eventName" dynamodbav:"eventName"`
+	Teams            []Team `json:"teams" dynamodbav:"teams"`
+	StartDate        string `json:"startDate" dynamodbav:"startDate"`
+	PagePath         string `json:"pagePath" dynamodbav:"pagePath"`
+	BestOf           int    `json:"bestOf" dynamodbav:"bestOf"`
+	Id               int    `json:"id" dynamodbav:"id"`
+	EventCountryFlag string `json:"eventCountryFlag" dynamodbav:"eventCountryFlag"`
 }
 
-type team struct {
+type Team struct {
 	Title string `json:"title"`
 }

@@ -34,6 +34,7 @@ func (d *DynamoDBClient) QueryMatchesByStartDate(ctx context.Context, startDate 
 
 	queryPaginator := dynamodb.NewQueryPaginator(d.client, &dynamodb.QueryInput{
 		TableName:                 aws.String(d.tableName),
+		IndexName:                 aws.String("startDate-id-index"),
 		ExpressionAttributeNames:  expr.Names(),
 		ExpressionAttributeValues: expr.Values(),
 		KeyConditionExpression:    expr.KeyCondition(),

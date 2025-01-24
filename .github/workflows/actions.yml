@@ -38,7 +38,7 @@ jobs:
         run: |
           SASHA_TABLE_NAME=` \
             aws cloudformation describe-stacks --stack-name sasha \
-          | jq -r '.Stacks[].Outputs[] | select(.OutputKey == "VlrMatchesTableName"  ) | .OutputValue'`
+          | jq -r '.Stacks[].Outputs[] | select(.OutputKey == "MatchesTableName"  ) | .OutputValue'`
           echo "SASHA_TABLE_NAME=$SASHA_TABLE_NAME" >> $GITHUB_ENV
       - name: Prepare SAM parameters
         env:
